@@ -1,0 +1,16 @@
+.vscode
+configs/*.yaml
+image/*.png
+image/*.jpg
+image/*.jpeg
+image/*.gif
+image/*.webp
+image/*.svg
+
+__pycache__/
+__pycache__/*
+
+*.ipynb
+
+logs/*.log
+logs/*.log.*
