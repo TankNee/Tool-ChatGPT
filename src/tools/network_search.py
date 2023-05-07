@@ -4,7 +4,7 @@ from langchain.tools import DuckDuckGoSearchRun
 
 class NetworkSearch(DuckDuckGoSearchRun):
 
-    def __init__(self, device) -> None:
+    def __init__(self, **kwargs) -> None:
         super().__init__()
 
     @prompts(name="Network Search", 

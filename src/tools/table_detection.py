@@ -9,8 +9,9 @@ import os
 
 class TableDetection(BaseTool):
 
-    def __init__(self, model_name, cache_dir, device) -> None:
-        super().__init__(device)
+    def __init__(self, model_name, cache_dir, device, llm) -> None:
+        super().__init__(llm)
+        self.device = device
         model_path = snapshot_download(repo_id=model_name,
                                        cache_dir=cache_dir,
                                        local_files_only=True)

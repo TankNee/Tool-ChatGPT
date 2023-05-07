@@ -36,12 +36,15 @@ class ToolMatrix():
                 self.config.__dict__[tool_module][k]
                 for k in self.config.__dict__[tool_module].keys()
             ] if hasattr(self.config, tool_module) else []
-            tool = tool_cls(*arguments, device=self.config.device)
+            tool = tool_cls(*arguments, llm=self.llm)
 
-            self.tools.append(
-                Tool(name=tool.inference.name,
-                     description=tool.inference.desc,
-                     func=tool.inference))
+            if hasattr(tool, "get_tools"):
+                self.tools.extend(tool.get_tools())
+            else:
+                self.tools.append(
+                    Tool(name=tool.inference.name,
+                        description=tool.inference.desc,
+                        func=tool.inference))
             logger.debug(f"Tool [{tool_module}] initialized.")
 
         preset_tools = load_tools(self.config.preset_tools, llm=self.llm)
@@ -59,6 +62,7 @@ class ToolMatrix():
             agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
             verbose=True,
             return_intermediate_steps=True,
+            max_iterations=2,
             # 暂时先用英文的prompt
             agent_kwargs={
                 "prefix": PREFIX,

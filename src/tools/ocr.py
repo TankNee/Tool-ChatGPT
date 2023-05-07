@@ -6,8 +6,8 @@ from PIL import Image
 
 
 class OCR(BaseTool):
-    def __init__(self, device) -> None:
-        super().__init__(device)
+    def __init__(self, llm) -> None:
+        super().__init__(llm)
 
     @prompts(name="Optical Character Recognition",
              desc="useful when you want to recognize the text in an image."
