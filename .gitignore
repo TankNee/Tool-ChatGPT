@@ -14,3 +14,6 @@ __pycache__/*
 
 logs/*.log
 logs/*.log.*
+
+database
+src/prompts/gk_prompt.py
