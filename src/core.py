@@ -3,7 +3,7 @@ from PIL import Image
 from loguru import logger
 from utils import AutoConfiguration
 from langchain.tools import Tool
-from langchain.llms import OpenAI
+from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from langchain.agents.initialize import initialize_agent
 from langchain.agents import AgentType, load_tools
@@ -16,7 +16,9 @@ class ToolMatrix():
     def __init__(self) -> None:
         self.config = None
         self.tools = []
-        self.llm = OpenAI(temperature=0)
+        self.llm = ChatOpenAI(temperature=0,
+                          model_name="gpt-3.5-turbo",
+                          max_tokens=512)
         self.memory = ConversationBufferMemory(memory_key="chat_history",
                                                output_key="output")
         self.agent = None
@@ -43,8 +45,8 @@ class ToolMatrix():
             else:
                 self.tools.append(
                     Tool(name=tool.inference.name,
-                        description=tool.inference.desc,
-                        func=tool.inference))
+                         description=tool.inference.desc,
+                         func=tool.inference))
             logger.debug(f"Tool [{tool_module}] initialized.")
 
         preset_tools = load_tools(self.config.preset_tools, llm=self.llm)
@@ -62,7 +64,7 @@ class ToolMatrix():
             agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
             verbose=True,
             return_intermediate_steps=True,
-            max_iterations=2,
+            max_iterations=8,
             # 暂时先用英文的prompt
             agent_kwargs={
                 "prefix": PREFIX,

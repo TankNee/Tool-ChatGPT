@@ -64,12 +64,13 @@ class LayoutAnalysis(BaseTool):
         return output_path
 
     @prompts(
-        name="Layout Info Tool",
+        name="Layout Analysis Tool",
         desc="useful when you want to get the layout text info of document."
         "For example, you can see how many tables, text, headings, diagrams and the like are in the document"
         "The input to this tool should be a path string,"
         "representing the image_path of the document image."
-        "The output to this tool is a dict, which contains the list of image file path of document component."
+        "The output to this tool is a dict, "
+        "which contains the list of image file path of document component."
     )
     def meta_info_tool(self, img_path):
         instance, _ = self.analysis(img_path)
@@ -108,7 +109,7 @@ class LayoutAnalysis(BaseTool):
         cut_img = img.crop(boxes)
         output_path = get_output_path(img_path)
         cut_img.save(output_path)
-        
+
         logger.debug(f"Cut image path is {output_path}")
 
         return output_path
