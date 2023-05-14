@@ -1,6 +1,7 @@
 import os, uuid, shutil, re
 from PIL import Image
 from loguru import logger
+from models.chatglm import ChatGLM
 from utils import AutoConfiguration
 from langchain.tools import Tool
 from langchain.chat_models import ChatOpenAI
@@ -16,14 +17,16 @@ class ToolMatrix():
     def __init__(self) -> None:
         self.config = None
         self.tools = []
-        self.llm = ChatOpenAI(temperature=0,
-                          model_name="gpt-3.5-turbo",
-                          max_tokens=512)
+        # self.llm = ChatOpenAI(temperature=0.1,
+        #                       model_name="gpt-3.5-turbo",
+        #                       max_tokens=1024)
+        self.llm = None
         self.memory = ConversationBufferMemory(memory_key="chat_history",
                                                output_key="output")
         self.agent = None
 
     def init_all(self):
+        self.llm = self.init_llm()
         self.init_tools()
         self.init_logger()
         self.agent = self.init_agent()
@@ -54,6 +57,24 @@ class ToolMatrix():
         self.tools.extend(preset_tools)
 
         logger.info(f"{len(self.tools)} tools initialized.")
+
+    def init_llm(self):
+        model_type = self.config.model_type
+        if model_type == "chatglm":
+            # self.llm = ChatGLM(self.config.model_config[model_type]['base_url'],
+            #                    self.config.model_config[model_type]['api_key'])
+            llm = ChatGLM()
+            llm.load_config(self.config.model_config[model_type])
+        elif model_type == "openai":
+            llm = ChatOpenAI(self.config.model_config[model_type]['temperature'],
+                                  self.config.model_config[model_type]['model_name'],
+                                  self.config.model_config[model_type]['max_tokens'])
+        else:
+            raise NotImplementedError(f"Model type [{model_type}] not supported.")
+        
+        logger.debug(f"LLM [{model_type}] initialized.")
+        return llm
+
 
     def init_agent(self):
         self.memory.clear()
